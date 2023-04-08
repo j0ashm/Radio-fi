@@ -1,0 +1,42 @@
+{
+    "KORD App (10R/28C)": {
+        "stream": "https://s1-fmt2.liveatc.net/kord5?nocache=",
+        "name": "ORD (Chicago) Approach"
+    },
+    "KLAX Tower": {
+        "stream": "https://s1-fmt2.liveatc.net/klax_twr?nocache=",
+        "name": "LAX (Los Angeles) Tower"
+    },
+    "KJFK Ground": {
+        "stream": "https://s1-fmt2.liveatc.net/kjfk9_s?nocache=",
+        "name": "JFK (New York) Ground"
+    },
+    "KSEA Approach (16L/34R, 16C/34C)": {
+        "stream": "https://s1-fmt2.liveatc.net/ksea2_twr_e?",
+        "name": "SEA (Seattle) Approach"
+    },
+    "KLAX Final Approach": {
+        "stream": "https://s1-fmt2.liveatc.net/klax6?nocache=",
+        "name": "LAX (Los Angeles) Final Approach"
+    },
+    "KDEN Tower": {
+        "stream": "https://s1-bos.liveatc.net/kden1_3?nocache=",
+        "name": "DEN (Denver) Tower"
+    },
+    "KLAS Tower": {
+        "stream": "https://s1-bos.liveatc.net/klas4_twr?nocache=",
+        "name": "LAS (Las Vegas) Tower"
+    },
+    "KBOS Tower": {
+        "stream": "https://s1-fmt2.liveatc.net/kbos_twr?nocache=",
+        "name": "BOS (Boston) Tower"
+    },
+    "CYYZ Arrival": {
+        "stream": "https://s1-fmt2.liveatc.net/cyyz6?nocache=",
+        "name": "YYZ Approach"
+    },
+    "KSFO Ground": {
+        "stream": "https://s1-bos.liveatc.net/ksfo_gnd?nocache=",
+        "name": "SFO (San Francisco) Ground"
+    } 
+}
