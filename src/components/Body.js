@@ -17,10 +17,12 @@ function Body() {
 
     const formattedDate = `${year}${month}${day}${hours}${minutes}${seconds}${milliseconds}`;
 
-    const [stream, setStream] = useState(streams['KORD App (10R/28C)'].stream);
+    const [stream, setStream] = useState(`${streams['KORD App (10R/28C)'].stream}${formattedDate}`);
     const [streamVolume, setStreamVolume] = useState(0.5);
     const [lofiVolume, setLofiVolume] = useState(0.5);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [buttonText, setButtonText] = useState('Start Mix');
+    const [buttonColor, setButtonColor] = useState('#9ae6b4');
 
     const atcRef = useRef(new Audio(stream));
     const lofiRef = useRef(new Audio(lofi1));
@@ -37,28 +39,56 @@ function Body() {
 
     useEffect(() => {
         atcRef.current.src = stream;
+        atcRef.current.load();
     }, [stream]);
+
+    useEffect(() => {
+        let button = document.getElementById('btn');
+        button.textContent = buttonText;
+    }, [buttonText]);
+
+    useEffect(() => {
+        let button = document.getElementById('btn');
+        button.style.backgroundColor = buttonColor;
+    }, [buttonColor]);
+
+    function changeStream() {
+        let select = document.getElementById('stream-select');
+        let stream = select.options[select.selectedIndex].value;
+
+        setStream(stream);
+    }
 
     function startMix() {
         if (isPlaying) {
-            atcRef.current.pause(); lofiRef.current.pause();
+            // TODO: investigate why pausing doesn't work
+            // atcRef.current.pause(); 
+            // lofiRef.current.pause();
+
+            setLofiVolume(0);
+            setStreamVolume(0);
             setIsPlaying(false);
+            setButtonText('Start Mix');
+            setButtonColor('#9ae6b4');
         }
 
         if (stream === null) return;
-        atcRef.current.play(); lofiRef.current.play();
+        atcRef.current.play();
+        lofiRef.current.play();
         setIsPlaying(true);
+        setButtonText('Stop Mix');
+        setButtonColor('#feb2b2');
     }
 
     return (
         <Box mt={'15%'}>
-            <Button onClick={startMix} colorScheme='green' width={'100%'}>Start Mix</Button>
+            <Button id="btn" onClick={startMix} colorScheme={buttonColor} width={'100%'}>{buttonText}</Button>
             <Spacer mb={'15%'}/>
             <Text>ATC Stream</Text>
-            <Select placeholder='Choose a stream...' defaultValue={stream} onChange={(v) => setStream(`${v}${formattedDate}`)} variant={'filled'} mb={'15%'}>
+            <Select id="stream-select" placeholder='Choose a stream...' defaultValue={stream} onChange={() => changeStream()} variant={'filled'} mb={'15%'}>
                 {Object.keys(streams).map((key) => {
                     return (
-                        <option key={key} value={streams[key].stream}>{streams[key].name}</option>
+                        <option key={key} value={`${streams[key].stream}${formattedDate}`}>{streams[key].name}</option>
                     )
                 })}
             </Select>
