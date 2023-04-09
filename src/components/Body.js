@@ -1,4 +1,4 @@
-import { Button, Box, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Spacer, Text, Select, useToast } from '@chakra-ui/react'
+import { Button, Box, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Spacer, Text, Select, useToast, useColorModeValue } from '@chakra-ui/react'
 
 import React, { useEffect, useState, useRef } from 'react'
 import lofi1 from '../music/1.mp3'
@@ -14,16 +14,19 @@ function Body() {
     const minutes = currentDate.getMinutes().toString().padStart(2, '0');
     const seconds = currentDate.getSeconds().toString().padStart(2, '0');
     const milliseconds = currentDate.getMilliseconds().toString().padStart(3, '0');
-
+    
     const formattedDate = `${year}${month}${day}${hours}${minutes}${seconds}${milliseconds}`;
+
+    const redColor = useColorModeValue('#E53E3E', '#feb2b2');
+    const greenColor = useColorModeValue('#38A169', '#9ae6b4');
 
     const [stream, setStream] = useState();
     const [streamVolume, setStreamVolume] = useState(0.5);
     const [lofiVolume, setLofiVolume] = useState(0.5);
     const [isPlaying, setIsPlaying] = useState(false);
     const [buttonText, setButtonText] = useState('Start Mix');
-    const [buttonColor, setButtonColor] = useState('#9ae6b4');
-
+    const [buttonColor, setButtonColor] = useState(greenColor);
+    
     const toast = useToast();
 
     const atcRef = useRef(new Audio(stream));
@@ -69,7 +72,7 @@ function Body() {
 
             setIsPlaying(false);
             setButtonText('Start Mix');
-            setButtonColor('#9ae6b4');
+            setButtonColor(greenColor);
         } else {
             if (!stream) {
                 return toast({
@@ -85,7 +88,7 @@ function Body() {
             lofiRef.current.play();
             setIsPlaying(true);
             setButtonText('Stop Mix');
-            setButtonColor('#feb2b2');
+            setButtonColor(redColor);
         }
     }
 
