@@ -1,4 +1,4 @@
-import { Button, Box, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Spacer, Text, Select } from '@chakra-ui/react'
+import { Button, Box, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Spacer, Text, Select, useToast } from '@chakra-ui/react'
 
 import React, { useEffect, useState, useRef } from 'react'
 import lofi1 from '../music/1.mp3'
@@ -17,12 +17,14 @@ function Body() {
 
     const formattedDate = `${year}${month}${day}${hours}${minutes}${seconds}${milliseconds}`;
 
-    const [stream, setStream] = useState(`${streams['KORD App (10R/28C)'].stream}${formattedDate}`);
+    const [stream, setStream] = useState();
     const [streamVolume, setStreamVolume] = useState(0.5);
     const [lofiVolume, setLofiVolume] = useState(0.5);
     const [isPlaying, setIsPlaying] = useState(false);
     const [buttonText, setButtonText] = useState('Start Mix');
     const [buttonColor, setButtonColor] = useState('#9ae6b4');
+
+    const toast = useToast();
 
     const atcRef = useRef(new Audio(stream));
     const lofiRef = useRef(new Audio(lofi1));
@@ -40,6 +42,7 @@ function Body() {
     useEffect(() => {
         atcRef.current.src = stream;
         atcRef.current.load();
+        atcRef.current.play(); // Play forces the audio to start the new source stream
     }, [stream]);
 
     useEffect(() => {
@@ -61,23 +64,29 @@ function Body() {
 
     function startMix() {
         if (isPlaying) {
-            // TODO: investigate why pausing doesn't work
-            // atcRef.current.pause(); 
-            // lofiRef.current.pause();
+            atcRef.current.pause(); 
+            lofiRef.current.pause();
 
-            setLofiVolume(0);
-            setStreamVolume(0);
             setIsPlaying(false);
             setButtonText('Start Mix');
             setButtonColor('#9ae6b4');
+        } else {
+            if (!stream) {
+                return toast({
+                    title: 'No stream selected',
+                    description: 'Please select a stream from the dropdown menu',
+                    status: 'error',
+                    duration: 5000,
+                    isClosable: true,
+                });
+            }
+            atcRef.current.load(); // Loading is necessary to take the audio back to the currently live content, failure to do this results in resuming of audio from wherever it was paused
+            atcRef.current.play();
+            lofiRef.current.play();
+            setIsPlaying(true);
+            setButtonText('Stop Mix');
+            setButtonColor('#feb2b2');
         }
-
-        if (stream === null) return;
-        atcRef.current.play();
-        lofiRef.current.play();
-        setIsPlaying(true);
-        setButtonText('Stop Mix');
-        setButtonColor('#feb2b2');
     }
 
     return (
