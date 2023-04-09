@@ -26,27 +26,28 @@ function Body() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [buttonText, setButtonText] = useState('Start Mix');
     const [buttonColor, setButtonColor] = useState(greenColor);
-    
+    const [initialActivation, setInitialActivation] = useState(false);
+
     const toast = useToast();
 
-    const atcRef = useRef(new Audio(stream));
-    const lofiRef = useRef(new Audio(lofi1));
-    atcRef.current.volume = streamVolume;
-    lofiRef.current.volume = lofiVolume;
+    const audioRef = useRef([]);
 
     useEffect(() => {
-        atcRef.current.volume = streamVolume;
-    }, [streamVolume]);
+        if (!initialActivation) return;
+        audioRef.current[1].volume = streamVolume;
+    }, [streamVolume, initialActivation]);
 
     useEffect(() => {
-        lofiRef.current.volume = lofiVolume;
-    }, [lofiVolume]);
+        if (!initialActivation) return;
+        audioRef.current[1].volume = lofiVolume;
+    }, [lofiVolume, initialActivation]);
 
     useEffect(() => {
-        atcRef.current.src = stream;
-        atcRef.current.load();
-        atcRef.current.play(); // Play forces the audio to start the new source stream
-    }, [stream]);
+        if (!initialActivation) return;
+        audioRef.current[0].src = stream;
+        audioRef.current[0].load();
+        audioRef.current[0].play(); // Play forces the audio to start the new source stream
+    }, [stream, initialActivation]);
 
     useEffect(() => {
         let button = document.getElementById('btn');
@@ -67,8 +68,8 @@ function Body() {
 
     function startMix() {
         if (isPlaying) {
-            atcRef.current.pause(); 
-            lofiRef.current.pause();
+            audioRef.current[0].pause(); 
+            audioRef.current[1].pause();
 
             setIsPlaying(false);
             setButtonText('Start Mix');
@@ -83,9 +84,24 @@ function Body() {
                     isClosable: true,
                 });
             }
-            atcRef.current.load(); // Loading is necessary to take the audio back to the currently live content, failure to do this results in resuming of audio from wherever it was paused
-            atcRef.current.play();
-            lofiRef.current.play();
+            
+            if (!initialActivation) {
+                let feed = new Audio(stream);
+                feed.volume = streamVolume;
+                feed.load();
+                audioRef.current.push(feed);
+                
+                let music = new Audio(lofi1);
+                music.volume = lofiVolume;
+                music.load();
+                audioRef.current.push(music);
+
+                setInitialActivation(true);
+            }
+
+            audioRef.current[0].load(); // Loading is necessary to take the audio back to the currently live content, failure to do this results in resuming of audio from wherever it was paused
+            audioRef.current[0].play().catch(() => {});
+            audioRef.current[1].play().catch(() => {});
             setIsPlaying(true);
             setButtonText('Stop Mix');
             setButtonColor(redColor);
