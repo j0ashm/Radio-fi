@@ -1,8 +1,6 @@
 import { Button, Box, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Spacer, Text, Select, useToast, useColorModeValue } from '@chakra-ui/react'
 
 import React, { useEffect, useState, useRef } from 'react'
-import lofi1 from '../music/1.mp3'
-import lofi2 from '../music/2.mp3'
 import streams from './streams.json'
 
 function Body() {
@@ -22,6 +20,8 @@ function Body() {
 
     const [stream, setStream] = useState();
     const [streamVolume, setStreamVolume] = useState(0.5);
+    const [nowPlaying, setNowPlaying] = useState('Nothing!');
+    const [nowPlayingSrc, setNowPlayingSrc] = useState();
     const [lofiVolume, setLofiVolume] = useState(0.5);
     const [isPlaying, setIsPlaying] = useState(false);
     const [buttonText, setButtonText] = useState('Start Mix');
@@ -31,10 +31,11 @@ function Body() {
     const toast = useToast();
 
     const audioRef = useRef([]);
+    const musicContext = require.context('../../public/assets/music', true);
 
     useEffect(() => {
         if (!initialActivation) return;
-        audioRef.current[1].volume = streamVolume;
+        audioRef.current[0].volume = streamVolume;
     }, [streamVolume, initialActivation]);
 
     useEffect(() => {
@@ -59,11 +60,44 @@ function Body() {
         button.style.backgroundColor = buttonColor;
     }, [buttonColor]);
 
+    useEffect(() => {
+        let musicContent = document.getElementById('music-name');
+        musicContent.textContent = nowPlaying;
+    }, [nowPlaying]);
+
+    useEffect(() => {
+        if (audioRef && audioRef.current[1]) {
+            audioRef.current[1].src = nowPlayingSrc;
+            audioRef.current[1].load();
+            audioRef.current[1].play();
+        }
+    }, [nowPlayingSrc]);
+
     function changeStream() {
         let select = document.getElementById('stream-select');
         let stream = select.options[select.selectedIndex].value;
 
         setStream(stream);
+    }
+
+    function changeMusic() {
+        let assetPaths = musicContext.keys();
+        let found = false;
+
+        while (!found) {
+            let randomIndex = Math.floor(Math.random() * assetPaths.length);
+            let assetPath = assetPaths[randomIndex].substring(2);
+
+            if (nowPlayingSrc && nowPlayingSrc.includes(assetPath)) {
+                continue;
+            }
+
+            let publicURL = (process.env.PUBLIC_URL === '') ? 'http://localhost:3000' : `${process.env.PUBLIC_URL}`;
+
+            setNowPlaying(assetPath.slice(0, -4));
+            setNowPlayingSrc(`${publicURL}/assets/music/${encodeURIComponent(assetPath)}`);
+            found = true;
+        }
     }
 
     function startMix() {
@@ -91,10 +125,19 @@ function Body() {
                 feed.load();
                 audioRef.current.push(feed);
                 
-                let music = new Audio(lofi1);
+                changeMusic();
+                let music = new Audio();
+                music.src = nowPlayingSrc;
                 music.volume = lofiVolume;
                 music.load();
                 audioRef.current.push(music);
+
+                audioRef.current[1].addEventListener('ended', () => {
+                    changeMusic();
+                    audioRef.current[1].src = nowPlayingSrc;
+                    audioRef.current[1].load();
+                    audioRef.current[1].play();
+                });
 
                 setInitialActivation(true);
             }
@@ -135,6 +178,8 @@ function Body() {
                 </SliderTrack>
                 <SliderThumb />
             </Slider>
+            <Spacer mb={'15%'}/>
+            <Text><b>Now Playing: </b><span id="music-name">{nowPlaying}</span></Text>
         </Box>
     )
 }
