@@ -1,4 +1,4 @@
-import { Button, Box, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Spacer, Text, Select, Center, useToast, useColorModeValue } from '@chakra-ui/react'
+import { Button, Box, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Spacer, Text, Select, useToast, useColorModeValue } from '@chakra-ui/react'
 
 import React, { useEffect, useState, useRef } from 'react'
 import streams from './streams.json'
