@@ -1,5 +1,4 @@
-import { Button, Box, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Spacer, Text, Select, useToast, useColorModeValue } from '@chakra-ui/react'
-import { BsShuffle } from 'react-icons/bs';
+import { Button, Box, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Spacer, Text, Select, Center, useToast, useColorModeValue } from '@chakra-ui/react'
 
 import React, { useEffect, useState, useRef } from 'react'
 import streams from './streams.json'
@@ -21,7 +20,7 @@ function Body() {
 
     const [stream, setStream] = useState();
     const [streamVolume, setStreamVolume] = useState(0.5);
-    const [nowPlaying, setNowPlaying] = useState('Nothing!');
+    const [nowPlaying, setNowPlaying] = useState('Nothing playing');
     const [nowPlayingSrc, setNowPlayingSrc] = useState();
     const [lofiVolume, setLofiVolume] = useState(0.5);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -179,11 +178,8 @@ function Body() {
                 </SliderTrack>
                 <SliderThumb />
             </Slider>
-            <Spacer mb={'15%'}/>
-            <Box>
-                <Text><b>Now Playing: </b><span id="music-name">{nowPlaying}</span></Text>
-                <Button variant={'ghost'} colorScheme={'teal'} leftIcon={<BsShuffle />} ml={50} mt={2.5} onClick={() => changeMusic()}>Switch Song</Button>
-            </Box>
+            <Spacer mb={'10%'}/>
+            <Button variant={'outline'} id="music-name" colorScheme={'teal'} onClick={() => changeMusic()} isDisabled={!isPlaying}>Switch Song</Button>
         </Box>
     )
 }
