@@ -6,7 +6,7 @@ Standard React build/run guidelines apply here.
 A demo of this project as it progresses is available [here](https://radiofi.netlify.app/).
 
 # To-Do
-- [ ] Music rotation
+- [x] ~Music rotation~ Completed on 9th April, 2023 :)
 - [ ] Add more feeds (Hopefully, this can be done via a web-scraper rather than a manual config file)
 
 # Known Bugs
