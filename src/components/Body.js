@@ -1,4 +1,5 @@
 import { Button, Box, Slider, SliderTrack, SliderFilledTrack, SliderThumb, Spacer, Text, Select, useToast, useColorModeValue } from '@chakra-ui/react'
+import { BsShuffle } from 'react-icons/bs';
 
 import React, { useEffect, useState, useRef } from 'react'
 import streams from './streams.json'
@@ -179,7 +180,10 @@ function Body() {
                 <SliderThumb />
             </Slider>
             <Spacer mb={'15%'}/>
-            <Text><b>Now Playing: </b><span id="music-name">{nowPlaying}</span></Text>
+            <Box>
+                <Text><b>Now Playing: </b><span id="music-name">{nowPlaying}</span></Text>
+                <Button variant={'ghost'} colorScheme={'teal'} leftIcon={<BsShuffle />} ml={50} mt={2.5} onClick={() => changeMusic()}>Switch Song</Button>
+            </Box>
         </Box>
     )
 }
